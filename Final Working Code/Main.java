@@ -259,10 +259,8 @@ class Main {
     private static void printTotalRevenue(Locus locus) {
         double totalRevenue = 0;
         for (GroceryStore store : locus.getStores()) {
-            for (Map.Entry<GroceryItem, Integer> entry : store.getPurchases().entrySet()) {
-                GroceryItem item = entry.getKey();
-                int quantity = entry.getValue();
-                totalRevenue += (item.getPrice() * quantity); // Divide the revenue by 2
+            for (double afterDiscountTotal : store.getAfterDiscountTotals().values()) {
+                totalRevenue += afterDiscountTotal;
             }
         }
         System.out.println("\n--- Total Revenue ---");
