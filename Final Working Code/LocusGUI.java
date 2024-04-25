@@ -157,34 +157,34 @@ public class LocusGUI extends JFrame {
     // Go grocery shopping
     private void goGroceryShopping() {
         List<GroceryStore> stores = locus.getStores();
-        GroceryStore selectedStore = selectStore(stores);
-        if (selectedStore != null) {
-            createGroceryList(selectedStore);
+        JComboBox<String> storeComboBox = new JComboBox<>();
+        for (GroceryStore store : stores) {
+            storeComboBox.addItem(store.getName());
+        }
+
+        // Create a dialog box with the combo box
+        int result = JOptionPane.showConfirmDialog(this, storeComboBox, "Select a Store", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String selectedStoreName = (String) storeComboBox.getSelectedItem();
+            GroceryStore selectedStore = findStore(stores, selectedStoreName);
+            if (selectedStore != null) {
+                createGroceryList(selectedStore);
+            } else {
+                appendOutput("Store not found.");
+            }
+        } else {
+            appendOutput("Store selection canceled.");
         }
     }
 
-    // Select a grocery store
-    private GroceryStore selectStore(List<GroceryStore> stores) {
-        appendOutput("Available Stores:");
-        for (int i = 0; i < stores.size(); i++) {
-            appendOutput((i + 1) + ". " + stores.get(i).getName());
+    // Helper method to find a store by name
+    private GroceryStore findStore(List<GroceryStore> stores, String storeName) {
+        for (GroceryStore store : stores) {
+            if (store.getName().equals(storeName)) {
+                return store;
+            }
         }
-
-        String input = showInputDialog("Select a store:");
-        int storeChoice;
-        try {
-            storeChoice = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            appendOutput("Invalid store choice");
-            return null;
-        }
-
-        if (storeChoice < 1 || storeChoice > stores.size()) {
-            appendOutput("Invalid store choice");
-            return null;
-        }
-
-        return stores.get(storeChoice - 1);
+        return null;
     }
 
     // Create a grocery list
