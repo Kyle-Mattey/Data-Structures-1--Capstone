@@ -300,10 +300,9 @@ public class LocusGUI extends JFrame {
     private void printTotalRevenue() {
         double totalRevenue = 0;
         for (GroceryStore store : locus.getStores()) {
-            for (Map.Entry<GroceryItem, Integer> entry : store.getPurchases().entrySet()) {
-                GroceryItem item = entry.getKey();
-                int quantity = entry.getValue();
-                totalRevenue += item.getPrice() * quantity;
+            for (Map.Entry<GroceryList, Double> entry : store.getAfterDiscountTotals().entrySet()) {
+                double afterDiscountTotal = entry.getValue();
+                totalRevenue += afterDiscountTotal;
             }
         }
         appendOutput("\n--- Total Revenue ---");
@@ -344,11 +343,14 @@ public class LocusGUI extends JFrame {
             appendOutput("\n--- " + selectedStore.getName() + " Revenue ---");
             selectedStore.printSummary();
 
-            double storeRevenue = calculateStoreRevenue(selectedStore);
+            double storeRevenue = 0;
+            for (Map.Entry<GroceryList, Double> entry : selectedStore.getAfterDiscountTotals().entrySet()) {
+                double afterDiscountTotal = entry.getValue();
+                storeRevenue += afterDiscountTotal;
+            }
             appendOutput("Total Revenue for " + selectedStore.getName() + ": $" + storeRevenue);
         }
     }
-
     // Calculate revenue for a specific store
     private double calculateStoreRevenue(GroceryStore store) {
         double revenue = 0;
@@ -367,13 +369,18 @@ public class LocusGUI extends JFrame {
         Map<String, Double> itemRevenueMap = new HashMap<>();
 
         for (GroceryStore store : locus.getStores()) {
-            for (Map.Entry<GroceryItem, Integer> entry : store.getPurchases().entrySet()) {
-                GroceryItem item = entry.getKey();
-                int quantity = entry.getValue();
+            for (Map.Entry<GroceryList, Double> entry : store.getAfterDiscountTotals().entrySet()) {
+                GroceryList groceryList = entry.getKey();
+                double afterDiscountTotal = entry.getValue();
 
-                String itemStoreKey = item.getName() + "-" + store.getName();
-                double revenue = item.getPrice() * quantity;
-                itemRevenueMap.put(itemStoreKey, itemRevenueMap.getOrDefault(itemStoreKey, 0.0) + revenue);
+                for (GroceryItemOrder order : groceryList.getOrders()) {
+                    GroceryItem item = order.getItem();
+                    int quantity = order.getQuantity();
+
+                    String itemStoreKey = item.getName() + "-" + store.getName();
+                    double itemRevenue = item.getPrice() * quantity;
+                    itemRevenueMap.put(itemStoreKey, itemRevenueMap.getOrDefault(itemStoreKey, 0.0) + itemRevenue);
+                }
             }
         }
 
