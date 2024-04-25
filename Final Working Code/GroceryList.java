@@ -5,6 +5,7 @@ class GroceryList {
     List<GroceryItemOrder> orders;
     private double discount;
 
+
     public GroceryList(double discount) {
         this.orders = new ArrayList<>();
         this.discount = discount;
