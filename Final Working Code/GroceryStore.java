@@ -4,6 +4,7 @@ class GroceryStore {
     private String name;
     private Map<GroceryItem, Integer> inventory;
     private Map<GroceryItem, Integer> purchases;
+    private Map<GroceryList, Double> afterDiscountTotals;
 
     public GroceryStore(String name) {
         this.name = name;
@@ -13,10 +14,19 @@ class GroceryStore {
         inventory.put(new GroceryItem("Apple", 0.5), 100);
         inventory.put(new GroceryItem("Banana", 0.25), 50);
         inventory.put(new GroceryItem("Milk", 2.0), 20);
+        this.afterDiscountTotals = new HashMap<>();
     }
 
     public String getName() {
         return name;
+    }
+
+    public void storeAfterDiscountTotal(GroceryList groceryList, double afterDiscountTotal) {
+        afterDiscountTotals.put(groceryList, afterDiscountTotal);
+    }
+
+    public Map<GroceryList, Double> getAfterDiscountTotals() {
+        return afterDiscountTotals;
     }
 
     public Map<GroceryItem, Integer> getInventory() {
@@ -27,14 +37,11 @@ class GroceryStore {
         for (GroceryItemOrder order : list.orders) {
             GroceryItem item = order.getItem();
             int quantity = order.getQuantity();
-            // Check if the item already exists in purchases, if so, add to existing quantity
-            if (purchases.containsKey(item)) {
-                purchases.put(item, purchases.get(item) + quantity);
-            } else {
-                purchases.put(item, quantity);
-            }
+            purchases.put(item, quantity);
             inventory.put(item, inventory.get(item) - quantity);
         }
+        double afterDiscountTotal = list.getTotalCost();
+        storeAfterDiscountTotal(list, afterDiscountTotal);
     }
 
 
