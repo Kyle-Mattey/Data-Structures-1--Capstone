@@ -378,7 +378,7 @@ public class LocusGUI extends JFrame {
                     int quantity = order.getQuantity();
 
                     String itemStoreKey = item.getName() + "-" + store.getName();
-                    double itemRevenue = item.getPrice() * quantity;
+                    double itemRevenue = (item.getPrice() * quantity) * (1 - groceryList.getDiscount());
                     itemRevenueMap.put(itemStoreKey, itemRevenueMap.getOrDefault(itemStoreKey, 0.0) + itemRevenue);
                 }
             }
