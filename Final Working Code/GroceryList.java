@@ -27,6 +27,9 @@ class GroceryList {
         }
         return subtotal;
     }
+    public double getDiscount() {
+        return discount;
+    }
 
     public double getTotalCost() {
         return getSubtotal() * (1 - discount);
